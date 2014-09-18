@@ -22,6 +22,10 @@ name={{#escaped}}{{#safe_filename}}{{{ name }}}{{/safe_filename}}{{/escaped}}
 program={{#escaped}}{{{ program }}}{{/escaped}}
 args={{{ escaped_args }}}
 pidfile="/var/run/$name.pid"
+{{#other_args}}
+_oa="$*"
+other_args=${_oa#*start}
+{{/other_args}}
 
 [ -r /etc/default/$name ] && . /etc/default/$name
 [ -r /etc/sysconfig/$name ] && . /etc/sysconfig/$name
@@ -56,7 +60,7 @@ start() {
   chroot --userspec "$user":"$group" "$chroot" sh -c "
     {{{ulimit_shell}}}
     cd \"$chdir\"
-    exec \"$program\" $args
+    exec \"$program\" $args {{#other_args}}$other_args{{/other_args}}
   " > /var/log/$name.log 2> /var/log/$name.err &
 
   # Generate the pidfile from here. If we instead made the forked process

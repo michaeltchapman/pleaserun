@@ -94,6 +94,12 @@ class PleaseRun::Platform::Base
     end
   end
 
+  attribute :other_args, "Whether to allow additional arguments to the start command", :default => false do
+    validate do |other_args|
+      insist { other_args }.is_a?(Bool)
+    end
+  end
+
   attribute :limit_coredump, "Largest size (in blocks) of a core file that can be created. (setrlimit RLIMIT_CORE)" do
     validate { |v| v == "ulimited" || v.to_i > 0 }
   end
